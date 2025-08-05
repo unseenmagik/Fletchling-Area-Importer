@@ -1,11 +1,9 @@
-# config.ini
-
 [settings]
 koji_url = http://127.0.0.1:1234/api/v1/geofence/feature-collection/{project}
-koji_token = kojiToken
+koji_token = kojiToken123
 fletchling_reload_url = http://127.0.0.1:1234/api/config/reload
 sleep_time_seconds = 60
 enable_logs = yes
-retry_count=2
-parallel_jobs=1
+retry_count = 2
+parallel_jobs = 2
 importer_path = /absolute/path/to/fletchling-osm-importer
