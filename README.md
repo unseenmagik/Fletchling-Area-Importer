@@ -58,6 +58,8 @@ This repository contains a Bash script to generate and run area import scripts f
    parallel_jobs=1
    # Log file name
    log_file="import-areas.log"
+   # Set your path for Fletchlings osm-importer
+   importer_path = /absolute/path/to/fletchling-osm-importer
    ```
 
 4. Make the generator script executable:
