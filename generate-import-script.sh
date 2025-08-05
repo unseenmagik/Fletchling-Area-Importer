@@ -24,6 +24,7 @@ sleep_time_seconds=${config[sleep_time_seconds]:-120}
 enable_logs=${config[enable_logs]:-no}
 retry_count=${config[retry_count]:-0}
 parallel_jobs=${config[parallel_jobs]:-1}
+importer_path=${config[importer_path]:-./fletchling-osm-importer}  # ✅ NEW
 
 # Defaults for CLI flags
 area=""
@@ -104,6 +105,7 @@ echo "  Retry enabled: $enable_retry (count: $retry_count)"
 echo "  Parallel enabled: $enable_parallel (jobs: $parallel_jobs)"
 echo "  Dry-run mode: $dry_run"
 echo "  Sleep time seconds: $sleep_time_seconds"
+echo "  Importer path: $importer_path"
 if [[ -n "$area" ]]; then
   echo "  Single area mode: $area"
 else
@@ -167,6 +169,7 @@ enable_parallel=$([ "$enable_parallel" = true ] && echo 1 || echo 0)
 dry_run=$([ "$dry_run" = true ] && echo 1 || echo 0)
 
 log_file="$log_file"
+importer_path="$importer_path"
 
 log() {
   local msg="\$1"
@@ -189,7 +192,7 @@ run_import() {
       break
     else
       log "[\$(date)] Importing area: \$area_name (Attempt \$((attempt+1)))"
-      ./fletchling-osm-importer "\$area_name"
+      "\$importer_path" "\$area_name"
       if [[ \$? -eq 0 ]]; then
         success=1
         break
