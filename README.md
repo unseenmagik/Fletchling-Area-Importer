@@ -1,133 +1,137 @@
-# Area Import Script Generator
+# 🐦 Fletchling Area Importer
 
-This repository contains a Bash script to generate and run area import scripts for Fletchling. It automates fetching area lists from a Koji API, generates an import script that imports each area with logging, ETA, retries, and optional parallelism, then reloads the configuration at the end.
-
----
-
-## Features
-
-- Fetch area list dynamically from Koji API
-- Generate an import shell script with:
-  - Progress percentage and ETA logging
-  - Configurable sleep time between imports
-  - Retry logic for failed imports
-  - Parallel imports support
-  - Dry-run mode to preview actions without execution
-  - Log file with detailed timestamps
-- Clear log file option before running
-- Command line options to:
-  - Import a single area
-  - Run the generated import script immediately
-  - Show help menu
+A configurable CLI tool to automate the import of area data into your Fletchling databse, based on API data from Koji.
 
 ---
 
-## Requirements
+## 🚀 Features
 
-- Bash shell (tested on Linux/macOS)
-- `curl` and `jq` installed
-- Access to Koji API and Fletchling services
-- `fletchling-osm-importer` executable in the PATH or same directory
-
----
-
-## Installation
-
-1. Clone this repo:
-   ```bash
-   git clone https://github.com/unseenmagik/Fletchling-Area-Importer.git
-   cd Fletchling-Area-Importer
-   cp config.ini.example config.ini
-   ```
-
-2. Configure your settings in `config.ini`:
-      ```ini
-   # Set your koji url and project to read areas from.   
-   koji_url="http://127.0.0.1:1234/api/v1/geofence/feature-collection/{project}"
-   # Koji bearer/auth token  
-   koji_token="setToken"
-   # Fletchling reload url
-   fletchling_reload_url="http://127.0.0.1:1234/api/config/reload"
-   # Sleep time in seconds between calling OSM Importer. [default=120s]
-   sleep_time_seconds=120
-   # Enable logging [yes|no]
-   enable_logs=yes
-   # Retry attempts incase of OSM failure
-   retry_count=2
-   # Paralled processing of OSM areas. [default=1]
-   parallel_jobs=1
-   # Log file name
-   log_file="import-areas.log"
-   # Set your path for Fletchlings osm-importer
-   importer_path = /absolute/path/to/fletchling-osm-importer
-   ```
-
-4. Make the generator script executable:
-   ```bash
-   chmod +x generate-import-script.sh
-   ```
+- Fetches area list from Koji API
+- Generates and executes import commands per area
+- Supports:
+  - ✅ Retries per area
+  - ✅ Parallel imports
+  - ✅ Dry-run mode
+  - ✅ Optional logging
+  - ✅ Configurable sleep interval
+- CLI-friendly with flag-based control
+- Easily extendable and production-ready
+- GitHub Actions CI support
 
 ---
 
-## Usage
+## 📦 Requirements
 
-Run the generator script with optional flags:
+- Python 3.8+
+- `fletchling-osm-importer` (must be built and accessible via path)
 
-```bash
-./generate-import-script.sh [OPTIONS]
-```
-
-### Options
-
-| Flag         | Description                                                                                      |
-|--------------|------------------------------------------------------------------------------------------------|
-| `-a "AreaName"` | Generate import script for only the specified area                                            |
-| `-i`         | Run the generated import script immediately after creation                                      |
-| `-r`         | Use retry count from config (number of retries per area import)                                |
-| `-p`         | Use parallel jobs from config (number of parallel imports)                                     |
-| `-cl`        | Clear the log file before running                                                              |
-| `-h`         | Show this help menu                                                                             |
-
-### Examples
-
-Generate import script for all areas:
+Install dependencies:
 
 ```bash
-./generate-import-script.sh
-```
-
-Generate import script for one area:
-
-```bash
-./generate-import-script.sh -a "AreaName"
-```
-
-Generate and run import script immediately:
-
-```bash
-./generate-import-script.sh -i
-```
-
-Clear log and run import script immediately:
-
-```bash
-./generate-import-script.sh -cl -i
+cd Fletchling-Area-Importer
+pip install -r requirements.txt
 ```
 
 ---
 
-## Logs
+## ⚙️ Configuration
+Create a config.ini file in the project root:
+`cp config.ini.example config.ini`
 
-Logs are written to the file specified in `config.ini` (default: `import-areas.log`). The log includes timestamps, progress percentage, ETA, retries, and confirmation of log updates after each area.
+```ini
+[settings]
+koji_url = http://127.0.0.1:1234/api/v1/geofence/feature-collection/{project}
+koji_token = kojiToken
+fletchling_reload_url = http://127.0.0.1:1234/api/config/reload
+sleep_time_seconds = 60
+enable_logs = yes
+retry_count = 2
+parallel_jobs = 2
+importer_path = /absolute/path/to/fletchling-osm-importer
+```
 
 ---
 
-## License
+## 🧪 Usage
 
-This project is licensed under the **GNU General Public License v3.0**.
+Run the CLI with:
+
+```bash
+python -m fletchling_importer [options]
+```
+
+### 🔹 Options
+
+| Flag | Description |
+|------|-------------|
+| `-a`, `--area`         | Run for a specific area only |
+| `-i`, `--immediate`    | Run immediately after generating script |
+| `-r`, `--retry`        | Enable retries per area (count from config) |
+| `-p`, `--parallel`     | Enable parallel imports (jobs from config) |
+| `-d`, `--dry-run`      | Print commands without executing |
+| `-cl`, `--clear-log`   | Clear log file before running |
+| `-h`, `--help`         | Show CLI help |
+
+### 🔹 Examples
+
+```bash
+# Import all areas
+python -m fletchling_importer
+
+# Dry-run for a specific area
+python -m fletchling_importer -a "MyArea" -d
+
+# Run with retries and parallel imports
+python -m fletchling_importer -r -p -i
+```
 
 ---
 
-## Contact
+## 🧪 CI/CD
 
-Please open an issue for bugs, feature requests, or suggestions.
+This repo includes a GitHub Actions workflow to:
+
+- Install dependencies via `requirements.txt`
+- Run all tests in the `tests/` folder
+
+Runs on:
+- Push to `python` branch
+- Pull Requests into `python`
+
+---
+
+## 📁 Project Structure
+
+```text
+.
+├── fletchling_importer/
+│   ├── __init__.py
+│   ├── main.py
+│   └── utils.py
+├── tests/
+│   └── test_dummy.py
+├── config.ini
+├── requirements.txt
+├── pyproject.toml
+├── README.md
+└── .github/
+    └── workflows/
+        └── ci.yml
+```
+
+---
+
+## 🛠️ Roadmap
+
+- [ ] Add unit tests for parallel and retry logic
+- [ ] Add flag to specify custom config path
+- [ ] Package as installable CLI (`pip install .`)
+- [ ] Docker support
+
+---
+
+## 📃 License
+
+MIT License. See [LICENSE](LICENSE) for details.
+
+---
