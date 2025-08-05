@@ -35,7 +35,7 @@ This repository contains a Bash script to generate and run area import scripts f
 
 1. Clone this repo:
    ```bash
-   git clone https://github.com/unseenmagik/Fletchling-Area-importer.git
+   git clone https://github.com/unseenmagik/Fletchling-Area-Importer.git
    cd Fletchling-Area-Importer
    cp config.ini.example config.ini
    ```
