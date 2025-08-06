@@ -9,3 +9,4 @@ enable_logs = yes
 retry_count=2
 parallel_jobs=1
 importer_path = /absolute/path/to/fletchling-osm-importer
+fletchling_config_dir = /absolute/path/to/fletchling/config
