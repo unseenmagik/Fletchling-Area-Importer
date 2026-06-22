@@ -19,12 +19,23 @@ done < "$config_file"
 
 koji_url=${config[koji_url]:-}
 koji_token=${config[koji_token]:-}
+koji_project=${config[koji_project]:-}
 fletchling_reload_url=${config[fletchling_reload_url]:-}
 sleep_time_seconds=${config[sleep_time_seconds]:-120}
 enable_logs=${config[enable_logs]:-no}
 retry_count=${config[retry_count]:-0}
 parallel_jobs=${config[parallel_jobs]:-1}
 importer_path=${config[importer_path]:-./fletchling-osm-importer}  # ✅ NEW
+
+# Fill the {project} placeholder in koji_url from koji_project, so the URL can be
+# kept project-agnostic (matches the feature-collection/{project} Koji endpoint).
+if [[ -n "$koji_project" ]]; then
+  koji_url="${koji_url//\{project\}/$koji_project}"
+fi
+if [[ "$koji_url" == *"{project}"* ]]; then
+  echo "❌ koji_url contains '{project}' but no koji_project is set in config.ini"
+  exit 1
+fi
 
 # Defaults for CLI flags
 area=""
@@ -192,7 +203,8 @@ run_import() {
       break
     else
       log "[\$(date)] Importing area: \$area_name (Attempt \$((attempt+1)))"
-      "\$importer_path" "\$area_name"
+      # Run from the importer's own directory so it can find ./configs/fletchling.toml
+      ( cd "\$(dirname "\$importer_path")" && "\$importer_path" "\$area_name" )
       if [[ \$? -eq 0 ]]; then
         success=1
         break

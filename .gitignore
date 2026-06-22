@@ -1,0 +1,7 @@
+# Local config — contains the Koji token; never commit
+config.ini
+
+# Generated at runtime by generate-import-script.sh
+import-areas.sh
+import-areas.log
+*.log
