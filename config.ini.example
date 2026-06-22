@@ -1,8 +1,12 @@
 # config.ini
 
 [settings]
+# {project} in koji_url is replaced with koji_project below, so you can switch
+# Koji projects without editing the URL. You can also hardcode the project here.
 koji_url = http://127.0.0.1:1234/api/v1/geofence/feature-collection/{project}
 koji_token = kojiToken
+# Koji project to pull the area list from (fills the {project} placeholder above).
+koji_project = your-koji-project
 fletchling_reload_url = http://127.0.0.1:1234/api/config/reload
 sleep_time_seconds = 60
 enable_logs = yes
